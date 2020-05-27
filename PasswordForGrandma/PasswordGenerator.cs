@@ -2,9 +2,9 @@
 
 namespace PasswordForGrandma
 {
-    public class PasswordGenerator
+    public static class PasswordGenerator
     {
-        public (string password, int cost) Generate(IVocabulary vocabulary, PasswordSettings settings)
+        public static (string password, int cost) Generate(IVocabulary vocabulary, PasswordSettings settings)
         {
             var dfs = new DeepFirstSearcher(vocabulary);
             var (bestPassword, bestPasswordCost) = dfs.Search(settings);

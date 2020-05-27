@@ -9,9 +9,8 @@ namespace PasswordForGrandmaTests
         [Fact]
         public void Test1()
         {
-            var solver = new PasswordGenerator();
-            PasswordSettings passwordSettings;
-            var (password, cost) = solver.Generate(new Vocabulary(), passwordSettings);
+            PasswordSettings passwordSettings = new PasswordSettings(20, 24, 4);
+            var (password, cost) = PasswordGenerator.Generate(new Vocabulary(), passwordSettings);
             Console.WriteLine(password, " ", cost);
         }
     }
