@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using PasswordForGrandma;
 using Xunit;
 
@@ -11,54 +12,30 @@ namespace PasswordForGrandmaTests
         public void SimpleTest()
         {
             var passwordSettings = new PasswordSettings(20, 24, 4);
-            var vocabulary = new Vocabulary
-            {
-                Words = new List<string>
-                {
-                    "aba", "abacaba", "caba", "abacabadaba", "daba",
-                    "let", "cat", "password", "continue", "me", "kiskiskis",
-                    "twix", "kitkat", "settings", "connection", "down",
-                    "up", "dictionary", "folder", "lexus"
-                }
-            };
+            var vocabulary = GenerateCorrectVocabulary();
             var (password, cost) = PasswordGenerator.Generate(vocabulary, passwordSettings);
-            Assert.Equal("me" + "daba" + "settings" + "folder", password);
-            Assert.Equal(38, cost);
+            password.Should().Be("me" + "daba" + "settings" + "folder");
+            cost.Should().Be(38);
         }
 
         [Fact]
         public void WhenImpossibleToGeneratePassword()
         {
             var passwordSettings = new PasswordSettings(20, 24, 4);
-            var vocabulary = new Vocabulary
-            {
-                Words = new List<string>
-                {
-                    "aba", "abacaba", "caba",
-                }
-            };
+            var vocabulary = GenerateSmallVocabulary();
             var (password, cost) = PasswordGenerator.Generate(vocabulary, passwordSettings);
-            Assert.Equal(string.Empty, password);
-            Assert.Equal(0, cost);
+            password.Should().Be(string.Empty);
+            cost.Should().Be(0);
         }
 
         [Fact]
         public void WhenInconsistentSettings()
         {
             var passwordSettings = new PasswordSettings();
-            var vocabulary = new Vocabulary
-            {
-                Words = new List<string>
-                {
-                    "aba", "abacaba", "caba", "abacabadaba", "daba",
-                    "let", "cat", "password", "continue", "me", "kiskiskis",
-                    "twix", "kitkat", "settings", "connection", "down",
-                    "up", "dictionary", "folder", "lexus"
-                }
-            };
+            var vocabulary = GenerateCorrectVocabulary();
             var (password, cost) = PasswordGenerator.Generate(vocabulary, passwordSettings);
-            Assert.Equal(string.Empty, password);
-            Assert.Equal(0, cost);
+            password.Should().Be(string.Empty);
+            cost.Should().Be(0);
         }
 
         [Fact]
@@ -66,7 +43,33 @@ namespace PasswordForGrandmaTests
         {
             var passwordSettings = new PasswordSettings();
             var vocabulary = new Vocabulary();
-            Assert.Throws<ArgumentNullException>(() => PasswordGenerator.Generate(vocabulary, passwordSettings));
+            var testAction = new Func<(string password, int cost)>(() => PasswordGenerator.Generate(vocabulary, passwordSettings));
+            testAction.Should().Throw<ArgumentNullException>();
+        }
+
+        private IVocabulary GenerateCorrectVocabulary()
+        {
+            return new Vocabulary
+            {
+                Words = new List<string>
+                {
+                    "aba", "abacaba", "caba", "abacabadaba", "daba",
+                    "let", "cat", "password", "continue", "me", "kiskiskis",
+                    "twix", "kitkat", "settings", "connection", "down",
+                    "up", "dictionary", "folder", "lexus"
+                }
+            };
+        }
+
+        private IVocabulary GenerateSmallVocabulary()
+        {
+            return new Vocabulary
+            {
+                Words = new List<string>
+                {
+                    "aba", "abacaba", "caba",
+                }
+            };
         }
     }
 }
