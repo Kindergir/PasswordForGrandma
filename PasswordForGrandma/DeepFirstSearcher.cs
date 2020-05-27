@@ -42,6 +42,8 @@ namespace PasswordForGrandma
                     bestOfTheBestPassword = _bestPassword.ToList();
                 }
             }
+            if (bestOfTheBestPasswordCost == int.MaxValue)
+                bestOfTheBestPasswordCost = 0;
             return (bestOfTheBestPassword, bestOfTheBestPasswordCost);
         }
 
